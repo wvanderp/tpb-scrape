@@ -3,31 +3,38 @@
 var request = require("sync-request");
 var cheerio = require("cheerio");
 var fs = require("fs");
+var mysql = require('mysql');
 
-var ids = [
-	11761303,
-	11761304,
-	11959777,
-	11150430,
-	11974122,
-	7070953,
-	3211594,
-	12146969,
-	3217521
-]
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : '',
+  database : 'tpb-scrape'
+});
 
- for (i in ids){
-	var id = ids[i];
+connection.connect();
+
+connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+  if (err) throw err;
+
+  console.log('The solution is: ', rows[0].solution);
+});
+
+connection.end()
+
+
+function scrape (id) {
 	var page = getPage(id);
 	if (page != null){
 		var data = gether(page, id);
 	}else{
 		var data = null;
-		continue;
+		return;
 	}
 	fs.writeFileSync("./json/"+id+".json", JSON.stringify(data, null, "\t"), 'utf-8');
 	// console.log(data);
-};
+}
+
 
 function getPage (i) {
 	var res = request('GET', 'https://thepiratebay.mn/torrent/'+i);
