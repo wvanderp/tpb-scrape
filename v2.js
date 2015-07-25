@@ -36,7 +36,10 @@ function getNext(){
 			if (err) throw err;
 			console.log("starting with id: "+rows[0].id)
 			scrape(rows[0].id)
-			getNext();
+			connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+Date.now()+'" WHERE `scraper`.`id` = '+rows[0].id+';', function(err, rows, fields) {
+				if (err) throw err;
+				getNext();
+			});
 		});
 	});
 }
@@ -49,6 +52,7 @@ function scrape (id) {
 		var data = gether(page, id);
 	}else{
 		var data = null;
+		connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "404" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {if (err) throw err;});
 		return;
 	}
 	fs.writeFileSync("./json/"+id+".json", JSON.stringify(data, null, "\t"), 'utf-8');
@@ -99,7 +103,6 @@ function gether (page, id) {
 			case "Size:": //size
 				var sizeRegex = /(\d+)\sBytes/g;
 				size = $(this).next().text().match(sizeRegex)[0];
-				console.log($(this).next().text());
 				size = size.substring(0,size.length - 6)
 				// console.log("size: "+size);
 			break;
