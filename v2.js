@@ -5,22 +5,42 @@ var cheerio = require("cheerio");
 var fs = require("fs");
 var mysql = require('mysql');
 
+//reading setting
+var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
+
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'tpb-scrape'
+  host     : settings.hostname,
+  user     : settings.username,
+  password : settings.password,
+  database : settings.database
 });
 
 connection.connect();
+var stop = 0;
+getNext();
 
-connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
-  if (err) throw err;
+function getNext(){
+	if (stop == 1) {
+		connection.end()
+		return;
+	};
 
-  console.log('The solution is: ', rows[0].solution);
-});
+	var start = getRandom(settings.start_id, settings.end_id);
+	connection.query('SELECT count(*) as count FROM `scraper` WHERE `scrape_date` = 0', function(err, rows, fields) {
+		if (rows[0].count ==0) {
+			stop = 1;
+			return;
+		};
+		// connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 ORDER BY RAND() LIMIT 1', function(err, rows, fields) {
+		connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 AND `id` > '+start+'LIMIT 1', function(err, rows, fields) {
+			if (err) throw err;
+			console.log("starting with id: "+rows[0].id)
+			scrape(rows[0].id)
+			getNext();
+		});
+	});
+}
 
-connection.end()
 
 
 function scrape (id) {
@@ -122,13 +142,13 @@ function gether (page, id) {
 				if(typeof cat != "undefined"){
 					cat = $(this).next().find("a").attr("href");
 					cat = cat.substring(8);
-					console.log("cat: "+cat);
+					// console.log("cat: "+cat);
 				}
 			break;
 			case "Files:": //filesAmount
 				if(typeof cat != "undefined"){
 		   			filesAmount = $(this).next().text();
-					console.log("filesAmount: "+filesAmount);
+					// console.log("filesAmount: "+filesAmount);
 				}
 			break;
 			case "Size:": //size
@@ -136,19 +156,19 @@ function gether (page, id) {
 					sizeRegex = /(\d+)\sBytes/g;
 					size = $(this).next().text().match(sizeRegex)[0];
 					size = size.substring(0,size.length - 6)
-					console.log("size: "+size);
+					// console.log("size: "+size);
 				}
 			break;
 			case "Info:": //info
 				if(typeof cat != "undefined"){
 					info = $(this).next().find("a").attr("href");
-					console.log("info: "+info);
+					// console.log("info: "+info);
 				}
 			break;
 			case "Spoken language(s):": //language
 				if(typeof cat != "undefined"){
 					language = $(this).next().text();
-					console.log("language: "+language);
+					// console.log("language: "+language);
 				}
 			break;
 			case "Tag(s):": //tagsLink
@@ -156,31 +176,31 @@ function gether (page, id) {
 					tagsLink = $(this).next().children().each(function(tag) {
 						tags.push($(this).text());
 					});
-					console.log("tags: "+tags);
+					// console.log("tags: "+tags);
 				}
 			break;
 			case "Uploaded:":  //date
 				if(typeof cat != "undefined"){
 					date = Date.parse($(this).next().text());
-					console.log("date: "+date);
+					// console.log("date: "+date);
 				}
 			break;
 			case "By:"://uploader
 				if(typeof cat != "undefined"){
 					uploader = $(this).next().text();
-					console.log("uploader: "+uploader);
+					// console.log("uploader: "+uploader);
 				}
 			break;
 			case "Seeders:": //seeders
 				if(typeof cat != "undefined"){
 					seeders = $(this).next().text();
-					console.log("seeders: "+seeders);
+					// console.log("seeders: "+seeders);
 				}
 			break;
 			case "Leechers:": //Leechers
 				if(typeof cat != "undefined"){
 					Leechers = $(this).next().text();
-					console.log("Leechers: "+Leechers);
+					// console.log("Leechers: "+Leechers);
 				}
 			break;
 		}
@@ -233,4 +253,8 @@ function gether (page, id) {
 
 	return ret;
 
+}
+
+function getRandom(min, max) {
+  return Math.random() * (max - min) + min;
 }
