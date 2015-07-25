@@ -1,0 +1,11 @@
+{
+
+	"hostname": "localhost",
+	"username": "root",
+	"password": "",
+	"database": "tpb-scrape",
+
+
+	"start_id": 1,
+	"end_id": 12155276
+}
