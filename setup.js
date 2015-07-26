@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 connection.connect();
 console.log("start")
-next(1);
+next(settings.start_id);
 
 
 function next (i) {
