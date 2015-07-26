@@ -13,11 +13,15 @@ var connection = mysql.createConnection({
 connection.connect();
 console.log("start")
 next(settings.start_id);
-
+var startDate = Date.now();
 
 function next (i) {
 	if(i >= settings.end_id){
 		console.log("last id "+ settings.end_id);
+		var endDate = Date.now();
+
+		var time = endDate - startDate;
+		console.log("it took "+time+" seconds")
 		connection.end()
 		return
 	}
