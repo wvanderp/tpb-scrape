@@ -6,6 +6,7 @@ var fs = require("fs");
 var mysql = require('mysql');
 
 //reading setting
+console.log("reading settings");
 var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
 
 var connection = mysql.createConnection({
@@ -15,17 +16,24 @@ var connection = mysql.createConnection({
   database : settings.database
 });
 
+console.log("starting sql connection");
 connection.connect();
 var stop = 0;
 
-getNext();
+
+function start(){
+	console.log("starting scraper")
+	while(true){
+		if (stop == 1) {
+			connection.end()
+			console.log("stopping scraper");
+			return;
+		};
+		getNext();
+	}
+}
 
 function getNext(){
-	if (stop == 1) {
-		connection.end()
-		return;
-	};
-
 	var start = getRandom(settings.start_id, settings.end_id);
 	connection.query('SELECT count(*) as count FROM `scraper` WHERE `scrape_date` = 0', function(err, rows, fields) {
 		if (err) throw err;
@@ -57,7 +65,6 @@ function scrape (id) {
 	fs.writeFileSync("./json/"+id+".json", JSON.stringify(data, null, "\t"), 'utf-8');
 	connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+Date.now()+'" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {
 		if (err) throw err;
-		getNext();
 	});
 	// console.log(data);
 }
