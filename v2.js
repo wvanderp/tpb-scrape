@@ -17,6 +17,7 @@ var connection = mysql.createConnection({
 
 connection.connect();
 var stop = 0;
+
 getNext();
 
 function getNext(){
@@ -27,19 +28,16 @@ function getNext(){
 
 	var start = getRandom(settings.start_id, settings.end_id);
 	connection.query('SELECT count(*) as count FROM `scraper` WHERE `scrape_date` = 0', function(err, rows, fields) {
+		if (err) throw err;
 		if (rows[0].count ==0) {
 			stop = 1;
 			return;
 		};
-		// connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 ORDER BY RAND() LIMIT 1', function(err, rows, fields) {
-		connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 AND `id` > '+start+'LIMIT 1', function(err, rows, fields) {
+		
+		connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 AND `id` > '+start+' LIMIT 1', function(err, rows, fields) {
 			if (err) throw err;
 			console.log("starting with id: "+rows[0].id)
 			scrape(rows[0].id)
-			connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+Date.now()+'" WHERE `scraper`.`id` = '+rows[0].id+';', function(err, rows, fields) {
-				if (err) throw err;
-				getNext();
-			});
 		});
 	});
 }
@@ -47,15 +45,20 @@ function getNext(){
 
 
 function scrape (id) {
-	var page = getPage(id);
-	if (page != null){
-		var data = gether(page, id);
+	var res = getPage(id);
+	if (res.body != null){
+		var data = gether(res.body, id);
 	}else{
 		var data = null;
-		connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "404" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {if (err) throw err;});
+		connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+res.code+'" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {if (err) throw err;});
 		return;
 	}
+
 	fs.writeFileSync("./json/"+id+".json", JSON.stringify(data, null, "\t"), 'utf-8');
+	connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+Date.now()+'" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {
+		if (err) throw err;
+		getNext();
+	});
 	// console.log(data);
 }
 
@@ -64,9 +67,9 @@ function getPage (i) {
 	var res = request('GET', 'https://thepiratebay.mn/torrent/'+i);
 	console.log(i+": "+res.statusCode);
 	if (res.statusCode == 200) {
-		return res.body;
+		return {"body": res.body, "code": res.statusCode};
 	}else{
-		return null;
+		return {"body": null, "code": res.statusCode};
 	}
 }
 

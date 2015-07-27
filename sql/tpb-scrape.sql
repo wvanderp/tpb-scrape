@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 24, 2015 at 04:45 PM
+-- Generation Time: Jul 27, 2015 at 02:00 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -28,6 +28,7 @@ USE `tpb-scrape`;
 -- Table structure for table `items`
 --
 
+DROP TABLE IF EXISTS `items`;
 CREATE TABLE IF NOT EXISTS `items` (
   `id` int(11) NOT NULL,
   `title` varchar(100) DEFAULT NULL,
@@ -41,7 +42,8 @@ CREATE TABLE IF NOT EXISTS `items` (
   `seeders` int(25) DEFAULT NULL,
   `infoHash` varchar(40) DEFAULT NULL,
   `magnetLink` varchar(2000) DEFAULT NULL,
-  `discription` varchar(1000) DEFAULT NULL
+  `discription` varchar(1000) DEFAULT NULL,
+  `commentId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -50,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 -- Table structure for table `scraper`
 --
 
+DROP TABLE IF EXISTS `scraper`;
 CREATE TABLE IF NOT EXISTS `scraper` (
   `id` int(11) NOT NULL,
   `scrape_date` int(11) NOT NULL DEFAULT '0'
@@ -64,6 +67,12 @@ CREATE TABLE IF NOT EXISTS `scraper` (
 --
 ALTER TABLE `items`
  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `scraper`
+--
+ALTER TABLE `scraper`
+ ADD UNIQUE KEY `id` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

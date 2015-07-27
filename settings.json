@@ -1,6 +1,5 @@
 {
-
-	"hostname": "localhost",
+	"hostname": "tpb.cwms.cc",
 	"username": "root",
 	"password": "root",
 	"database": "tpb-scrape",
