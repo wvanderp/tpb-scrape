@@ -1,7 +1,6 @@
 <?php
 	error_reporting(-1);
 	ini_set('display_errors', true);
-
 	$link = mysqli_connect("localhost", "root", "root", "tpb-scrape") or die(mysqli_error($link));
 
 	$query = "SELECT count(*) as count FROM `scraper` WHERE `scrape_date` = 0";

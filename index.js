@@ -3,95 +3,77 @@
 var request = require("sync-request");
 var cheerio = require("cheerio");
 var fs = require("fs");
-var mysql = require('mysql');
 
 //reading setting
 console.log("reading settings");
 var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
 
-var connection = mysql.createConnection({
-  host     : settings.hostname,
-  user     : settings.username,
-  password : settings.password,
-  database : settings.database
-});
-
-console.log("starting sql connection");
-connection.connect();
-var stop = 0;
-
 start();
 
 function start () {
 	while(true){
-		if (stop == 1) {
-			connection.end()
-			console.log("stopping scraper");
-			return;
-		};
+		console.log("getting task from server");
+		var res = request('GET', settings.apiUrl+"/getId.php");
+		var id = res.body.toString('utf8');
 
-		var start = getRandom(settings.start_id, settings.end_id);
-		connection.query('SELECT count(*) as count FROM `scraper` WHERE `scrape_date` = 0', function(err, rows, fields) {
-			if (err) throw err;
-			if (rows[0].count ==0) {
-				stop = 1;
-				return;
-			};
-			
-			connection.query('SELECT * FROM `scraper` WHERE `scrape_date` = 0 AND `id` > '+start+' LIMIT 1', function(err, rows, fields) {
-				if (err) throw err;
-				console.log("starting with id: "+rows[0].id)
-				scrape(rows[0].id)
-			});
-		});
+		scrape(id);
 	}
 }
 
 function scrape (id) {
 	var res = getPage(id);
+
 	if (res.body != null){
 		var data = gether(res.body, id);
 	}else{
 		var data = null;
-		connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+res.code+'" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {if (err) throw err;});
+		var res = request('POST', settings.apiUrl+"/error.php", {
+			json: { 
+				id: id,
+				resp: res.code
+			 }
+		});
+		console.log(res.body.toString('utf8'));
 		return;
 	}
 
-	fs.writeFileSync("./json/"+id+".json", JSON.stringify(data, null, "\t"), 'utf-8');
-	connection.query('UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = "'+Date.now()+'" WHERE `scraper`.`id` = '+id+';', function(err, rows, fields) {
-		if (err) throw err;
+	console.log(data);
+	var res = request('POST', settings.apiUrl+"/submit.php", {
+		body: JSON.stringify(data)
 	});
-	// console.log(data);
+	console.log(res.body.toString('utf8'));
 }
 
 
 function getPage (i) {
+	console.log("getting page")
 	var res = request('GET', 'https://thepiratebay.mn/torrent/'+i);
 	console.log(i+": "+res.statusCode);
 	if (res.statusCode == 200) {
-		return {"body": res.body, "code": res.statusCode};
+		return {"body": res.body.toString('utf8'), "code": res.statusCode};
 	}else{
 		return {"body": null, "code": res.statusCode};
 	}
 }
 
 function gether (page, id) {
+	console.log("parsing page");
 	$ = cheerio.load(page);
 
-		var title = "";
-		var cat = "";
-		var filesAmount = "";
-		var size = "";
-		var language = "";
-		var tags = [];
-		var info = "";
-		var date = "";
-		var uploader = "";
-		var seeders = "";
-		var Leechers = "";
-		var infohash = "";
-		var magnetlink = "";
-		var discription = "";
+	var title = "";
+	var cat = "";
+	var filesAmount = "";
+	var size = "";
+	var language = "";
+	var tags = [];
+	var info = "";
+	var date = "";
+	var uploader = "";
+	var seeders = "";
+	var Leechers = "";
+	var infohash = "";
+	var magnetlink = "";
+	var discription = "";
 
 
 	$("#details dl.col1 dt").each(function () {
@@ -263,6 +245,3 @@ function gether (page, id) {
 
 }
 
-function getRandom(min, max) {
-  return Math.random() * (max - min) + min;
-}

@@ -4,9 +4,9 @@
 
 	$link = mysqli_connect("localhost", "root", "root", "tpb-scrape") or die(mysqli_error($link));
 
-	if (isset($_POST["json"])) {
-		$json = $_POST["json"];
-	}else{
+	$json = file_get_contents('php://input');
+
+	if ($json == "" || !isset($json)) {
 		die("no json found");
 	}
 
@@ -17,11 +17,11 @@
 
 	$data = json_decode($json,true);
 
-	// var_dump($data);
-
 	file_put_contents("../json/".$data["id"].".json", $json);
 
 
 	$query = "UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = '".time()."' WHERE `scraper`.`id` = ".$data["id"].";";
 	mysqli_query($link, $query) or die(mysqli_error($link));
+
+	echo "item received";
 ?>
