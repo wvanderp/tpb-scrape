@@ -109,7 +109,7 @@ function gether (page, id) {
 			break;
 			case "Uploaded:":  //date
 				date = Date.parse($(this).next().text());
-				date = date.substring(0, str.length - 3);
+				date = date.substring(0, date.length - 3);
 				// console.log("date: "+date);
 			break;
 			case "By:"://uploader
@@ -173,7 +173,7 @@ function gether (page, id) {
 			case "Uploaded:":  //date
 				if(typeof cat != "undefined"){
 					date = Date.parse($(this).next().text());
-					date = date.substring(0, str.length - 3);
+					date = date.substring(0, date.length - 3);
 					// console.log("date: "+date);
 				}
 			break;
