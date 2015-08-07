@@ -7,6 +7,7 @@ var mysql = require('mysql');
 
 //reading setting
 console.log("reading settings");
+
 var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
 
 var connection = mysql.createConnection({
