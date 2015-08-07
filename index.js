@@ -97,7 +97,8 @@ function gether (page, id) {
 				info = $(this).next().find("a").attr("href");
 				// console.log("info: "+info);
 			break;
-			case "Spoken language(s):": //language
+			case "Spoken language(s):": //language of film
+			case "Texted language(s):": //language of text
 				language = $(this).next().text();
 				// console.log("language: "+language);
 			break;
@@ -108,8 +109,8 @@ function gether (page, id) {
 				// console.log("tags: "+tags);
 			break;
 			case "Uploaded:":  //date
-				date = Date.parse($(this).next().text());
-				date = date.toString().substring(0, date.length - 3);
+				date = Date.parse($(this).next().text()).toString();
+				date = date.substring(0, date.length-3);
 				// console.log("date: "+date);
 			break;
 			case "By:"://uploader
@@ -130,20 +131,20 @@ function gether (page, id) {
 	$("#details dl.col2 dt").each(function () {
 		switch ($(this).text()) {
 			case "Type:": //cat
-				if(typeof cat != "undefined"){
+				if(cat == ""){
 					cat = $(this).next().find("a").attr("href");
 					cat = cat.substring(8);
 					// console.log("cat: "+cat);
 				}
 			break;
 			case "Files:": //filesAmount
-				if(typeof cat != "undefined"){
+				if(filesAmount == ""){
 		   			filesAmount = $(this).next().text();
 					// console.log("filesAmount: "+filesAmount);
 				}
 			break;
 			case "Size:": //size
-				if(typeof cat != "undefined"){
+				if(size == ""){
 					sizeRegex = /(\d+)\sBytes/g;
 					size = $(this).next().text().match(sizeRegex)[0];
 					size = size.substring(0,size.length - 6)
@@ -151,19 +152,19 @@ function gether (page, id) {
 				}
 			break;
 			case "Info:": //info
-				if(typeof cat != "undefined"){
+				if(info == ""){
 					info = $(this).next().find("a").attr("href");
 					// console.log("info: "+info);
 				}
 			break;
 			case "Spoken language(s):": //language
-				if(typeof cat != "undefined"){
+				if(language == ""){
 					language = $(this).next().text();
 					// console.log("language: "+language);
 				}
 			break;
 			case "Tag(s):": //tagsLink
-				if(typeof cat != "undefined"){
+				if(tags == ""){
 					tagsLink = $(this).next().children().each(function(tag) {
 						tags.push($(this).text());
 					});
@@ -171,26 +172,26 @@ function gether (page, id) {
 				}
 			break;
 			case "Uploaded:":  //date
-				if(typeof cat != "undefined"){
-					date = Date.parse($(this).next().text());
-					date = date.toString().substring(0, date.length - 3);
+				if(date == ""){
+					date = Date.parse($(this).next().text()).toString();
+					date = date.substring(0, date.length-3);
 					// console.log("date: "+date);
 				}
 			break;
 			case "By:"://uploader
-				if(typeof cat != "undefined"){
+				if(uploader == ""){
 					uploader = $(this).next().text();
 					// console.log("uploader: "+uploader);
 				}
 			break;
 			case "Seeders:": //seeders
-				if(typeof cat != "undefined"){
+				if(seeders == ""){
 					seeders = $(this).next().text();
 					// console.log("seeders: "+seeders);
 				}
 			break;
 			case "Leechers:": //Leechers
-				if(typeof cat != "undefined"){
+				if(Leechers == ""){
 					Leechers = $(this).next().text();
 					// console.log("Leechers: "+Leechers);
 				}
