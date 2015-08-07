@@ -1,9 +1,7 @@
 {
-	"hostname": "tpb.cwms.cc",
-	"username": "root",
-	"password": "root",
-	"database": "tpb-scrape",
-
+	"apiUrl":"http://tpb.cwms.cc/tpb-scrape/api",
+	"apiUrlOld":"http://localhost/tpb-scrape/api",
+	"userAgent": "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
 
 	"start_id": 3211594,
 	"end_id": 12155276
