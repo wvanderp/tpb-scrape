@@ -10,14 +10,9 @@
 		die("no json found");
 	}
 
-	if(!file_exists("../json/")){
-		mkdir("../json/");
-		echo "making dir";
-	}
-
 	$data = json_decode($json,true);
 
-	file_put_contents("../json/".$data["id"].".json", $json);
+	file_put_contents("../json/".$data["id"].".json", $json) or die("file error");
 
 
 	$query = "UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = '".time()."' WHERE `scraper`.`id` = ".$data["id"].";";

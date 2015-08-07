@@ -1,5 +1,5 @@
-//request is a libaray for http request
-//I use the synchronous version because i can program this shit with desync crap
+//request is a library for http request
+//I use the synchronous version because i can program this shit with async shit
 var request = require("sync-request");
 var cheerio = require("cheerio");
 var fs = require("fs");
@@ -73,7 +73,7 @@ function gether (page, id) {
 	var Leechers = "";
 	var infohash = "";
 	var magnetlink = "";
-	var discription = "";
+	var description = "";
 
 
 	$("#details dl.col1 dt").each(function () {
@@ -109,6 +109,7 @@ function gether (page, id) {
 			break;
 			case "Uploaded:":  //date
 				date = Date.parse($(this).next().text());
+				date = date.substring(0, str.length - 3);
 				// console.log("date: "+date);
 			break;
 			case "By:"://uploader
@@ -172,6 +173,7 @@ function gether (page, id) {
 			case "Uploaded:":  //date
 				if(typeof cat != "undefined"){
 					date = Date.parse($(this).next().text());
+					date = date.substring(0, str.length - 3);
 					// console.log("date: "+date);
 				}
 			break;
@@ -208,9 +210,9 @@ function gether (page, id) {
 	}
 	// console.log("infohash: "+infohash);
 
-	//discription
-	discription = $(".nfo pre").text();
-	// console.log("discription: "+discription);
+	//description
+	description = $(".nfo pre").text();
+	// console.log("description: "+description);
 
 	//magnetlink	
 	if ($("#details dl.col2").text().length < 25) {
@@ -238,7 +240,7 @@ function gether (page, id) {
 		"Leechers": Leechers,
 		"infohash": infohash,
 		"magnetlink": magnetlink,
-		"discription": discription
+		"description": description
 	}
 
 	return ret;
