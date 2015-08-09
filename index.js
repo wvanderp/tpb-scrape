@@ -12,11 +12,12 @@ start();
 
 function start () {
 	while(true){
-		console.log("getting task from server");
+		console.log("getting tasks from server");
 		var res = request('GET', settings.apiUrl+"/getId.php");
-		var id = res.body.toString('utf8');
-
-		scrape(id);
+		var ids = JSON.parse(res.body);
+		ids.forEach(function(id){	
+			scrape(id);
+		});
 	}
 }
 
