@@ -1,14 +1,20 @@
 {
   "name": "tpb-scrape",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "a scraper for the pirate bay",
-  "main": "v2.js",
-  "repository": "https://github.com/wvanderp/tpb-scrape",
+  "main": "index.js",
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/wvanderp/tpb-scrape"
+  },
+  "bugs": {
+    "url": "https://github.com/wvanderp/tpb-scrape/issues"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "wouter van der plas",
+  "license": "MIT",
   "dependencies": {
     "cheerio": "^0.19.0",
     "fs": "0.0.2",

@@ -1,4 +1,8 @@
+#project specific
+# =========================
+*/json/*
 json/*
+
 
 # Logs
 logs
@@ -75,3 +79,14 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#linux
+# =========================
+
+*~
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
