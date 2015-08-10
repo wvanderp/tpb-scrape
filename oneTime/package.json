@@ -1,0 +1,17 @@
+{
+  "name": "tpb-scrape",
+  "version": "0.1.0",
+  "description": "a scraper for the pirate bay",
+  "main": "v2.js",
+  "repository": "https://github.com/wvanderp/tpb-scrape",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.19.0",
+    "fs": "0.0.2",
+    "sync-request": "^2.0.1"
+  }
+}

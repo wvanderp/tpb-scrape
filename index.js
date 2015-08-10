@@ -15,7 +15,8 @@ function start () {
 		console.log("getting tasks from server");
 		var res = request('GET', settings.apiUrl+"/getId.php");
 		var ids = JSON.parse(res.body);
-		ids.forEach(function(id){	
+
+		ids.forEach(function(id){
 			scrape(id);
 		});
 	}
@@ -23,32 +24,36 @@ function start () {
 
 function scrape (id) {
 	var res = getPage(id);
+	var data = null;
 
-	if (res.body != null){
-		var data = gether(res.body, id);
+	if (res.body !== null){
+		data = gether(res.body, id);
+
+		var comments = getComments(id);
+		data.comments = comments;
 	}else{
-		var data = null;
-		var res = request('POST', settings.apiUrl+"/error.php", {
-			json: { 
+		data = null;
+		var resError = request('POST', settings.apiUrl+"/error.php", {
+			json: {
 				id: id,
 				resp: res.code
 			 }
 		});
-		console.log(res.body.toString('utf8'));
+		console.log(resError.body.toString('utf8'));
 		return;
 	}
 
 	console.log(data);
-	var res = request('POST', settings.apiUrl+"/submit.php", {
+	var resSubmit = request('POST', settings.apiUrl+"/submit.php", {
 		body: JSON.stringify(data)
 	});
-	console.log(res.body.toString('utf8'));
+	console.log(resSubmit.body.toString('utf8'));
 }
 
 
 function getPage (i) {
-	console.log("getting page")
-	var res = request('GET', 'https://thepiratebay.mn/torrent/'+i);
+	console.log("getting page");
+	var res = request('GET', 'http://thepiratebay.mn/torrent/'+i);
 	console.log(i+": "+res.statusCode);
 	if (res.statusCode == 200) {
 		return {"body": res.body.toString('utf8'), "code": res.statusCode};
@@ -56,6 +61,7 @@ function getPage (i) {
 		return {"body": null, "code": res.statusCode};
 	}
 }
+
 
 function gether (page, id) {
 	console.log("parsing page");
@@ -91,7 +97,7 @@ function gether (page, id) {
 			case "Size:": //size
 				var sizeRegex = /(\d+)\sBytes/g;
 				size = $(this).next().text().match(sizeRegex)[0];
-				size = size.substring(0,size.length - 6)
+				size = size.substring(0,size.length - 6);
 				// console.log("size: "+size);
 			break;
 			case "Info:": //info
@@ -127,45 +133,45 @@ function gether (page, id) {
 				// console.log("Leechers: "+Leechers);
 			break;
 		}
-	})
+	});
 
 	$("#details dl.col2 dt").each(function () {
 		switch ($(this).text()) {
 			case "Type:": //cat
-				if(cat == ""){
+				if(cat === ""){
 					cat = $(this).next().find("a").attr("href");
 					cat = cat.substring(8);
 					// console.log("cat: "+cat);
 				}
 			break;
 			case "Files:": //filesAmount
-				if(filesAmount == ""){
+				if(filesAmount === ""){
 		   			filesAmount = $(this).next().text();
 					// console.log("filesAmount: "+filesAmount);
 				}
 			break;
 			case "Size:": //size
-				if(size == ""){
+				if(size === ""){
 					sizeRegex = /(\d+)\sBytes/g;
 					size = $(this).next().text().match(sizeRegex)[0];
-					size = size.substring(0,size.length - 6)
+					size = size.substring(0,size.length - 6);
 					// console.log("size: "+size);
 				}
 			break;
 			case "Info:": //info
-				if(info == ""){
+				if(info === ""){
 					info = $(this).next().find("a").attr("href");
 					// console.log("info: "+info);
 				}
 			break;
 			case "Spoken language(s):": //language
-				if(language == ""){
+				if(language === ""){
 					language = $(this).next().text();
 					// console.log("language: "+language);
 				}
 			break;
 			case "Tag(s):": //tagsLink
-				if(tags == ""){
+				if(tags === ""){
 					tagsLink = $(this).next().children().each(function(tag) {
 						tags.push($(this).text());
 					});
@@ -173,42 +179,43 @@ function gether (page, id) {
 				}
 			break;
 			case "Uploaded:":  //date
-				if(date == ""){
+				if(date === ""){
 					date = Date.parse($(this).next().text()).toString();
 					date = date.substring(0, date.length-3);
 					// console.log("date: "+date);
 				}
 			break;
 			case "By:"://uploader
-				if(uploader == ""){
+				if(uploader === ""){
 					uploader = $(this).next().text();
 					// console.log("uploader: "+uploader);
 				}
 			break;
 			case "Seeders:": //seeders
-				if(seeders == ""){
+				if(seeders === ""){
 					seeders = $(this).next().text();
 					// console.log("seeders: "+seeders);
 				}
 			break;
 			case "Leechers:": //Leechers
-				if(Leechers == ""){
+				if(Leechers === ""){
 					Leechers = $(this).next().text();
 					// console.log("Leechers: "+Leechers);
 				}
 			break;
 		}
-	})
+	});
 
 	//TITLE
 	title = $("#title").text().replace("\n", "").trim();
 
 	//INFO HASH
-	var regexHash = /[A-F\d]{40}/
-	if ($("#details dl.col2").text().length < 25) {
-		 infohash = $("#details dl.col1").text().match(regexHash)[0];
-	}else{
-		 infohash = $("#details dl.col2").text().match(regexHash)[0];
+	var regexHash = /[A-F\d]{40}/;
+	try {
+		infohash = $("#details dl.col2").text().match(regexHash)[0];
+	} catch (e) {
+		console.log(e);
+		infohash = $("#details dl.col1").text().match(regexHash)[0];
 	}
 	// console.log("infohash: "+infohash);
 
@@ -216,7 +223,7 @@ function gether (page, id) {
 	description = $(".nfo pre").text();
 	// console.log("description: "+description);
 
-	//magnetlink	
+	//magnetlink
 	if ($("#details dl.col2").text().length < 25) {
 		//no second colom
 		magnetlink = $(".download a:nth-child(1)").attr("href");
@@ -225,7 +232,7 @@ function gether (page, id) {
 		magnetlink = $("#details div:nth-child(10) div:nth-child(1) a:nth-child(1)").attr("href");
 	}
 	// console.log("magnetlink: "+magnetlink);
-	
+
 	//RETURN STATMEN
 	var ret = {
 		"id": id,
@@ -243,9 +250,53 @@ function gether (page, id) {
 		"infohash": infohash,
 		"magnetlink": magnetlink,
 		"description": description
-	}
+	};
 
 	return ret;
-
 }
 
+function getCommentsPage (i) {
+	console.log("getting comments");
+	var res = request('GET', 'http://thepiratebay.la/ajax_details_comments.php?id='+i);
+	console.log("(comments) "+i+": "+res.statusCode);
+	if (res.statusCode == 200) {
+		return {"body": res.body.toString('utf8'), "code": res.statusCode};
+	}else{
+		return {"body": null, "code": res.statusCode};
+	}
+}
+
+function getComments(id) {
+	var comments = [];
+
+	var res = getCommentsPage(id);
+	var page = res.body;
+
+	if (res.body === null) {
+		return {};
+	}
+	// console.log(page);
+
+	$ = cheerio.load(page);
+	commentLink = $("div").not(".comment").each(function() {
+		var byline = $(this).find(".byline");
+		// console.log(byline.text());
+
+		var user = byline.find("a").text();
+		// console.log("user: "+user);
+
+		var date = byline.text().substring(user.length+6, byline.text().length);
+		date = date.substring(0, date.length-6);
+		date = Date.parse(date).toString();
+		date = date.substring(0, date.length-3);
+		// console.log("date: "+date);
+
+		var text = $(this).find(".comment").text();
+		text = text.substring(1, text.length);
+		// console.log("text: "+text);
+
+		comments.push({"user":user, "date": date, "text":text});
+	});
+	// console.log(comments);
+	return comments;
+}
