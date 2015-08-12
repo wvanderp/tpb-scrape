@@ -13,7 +13,7 @@ start();
 function start() {
   while (true) {
     console.log("getting tasks from server");
-    var res = request('GET', settings.apiUrl + "/getId.php");
+    var res = request('GET', settings.apiUrl + "/update.php");
     var ids = JSON.parse(res.body);
 
     ids.forEach(function(id) {
