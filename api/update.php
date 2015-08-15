@@ -1,4 +1,6 @@
 <?php
+	//this script is used to get id for items that need updating
+	// for example json files made with a old version of the script.
 	error_reporting(-1);
 	ini_set('display_errors', true);
 

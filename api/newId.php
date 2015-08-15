@@ -1,4 +1,6 @@
 <?php
+	//this script is used for inserting new ids in the datebase.
+	//it expects a json array in the body of a post request.
 	error_reporting(-1);
 	ini_set('display_errors', true);
 

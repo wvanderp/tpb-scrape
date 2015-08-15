@@ -1,4 +1,8 @@
 <?php
+	//this script is for reporting 404 or other errors in the page
+	//input for the script is the folowing:
+	//a http post with the folowing json in the body:
+	//{"id": the id of the item, "resp": the response Code for that page}
 	error_reporting(-1);
 	ini_set('display_errors', true);
 
@@ -17,6 +21,6 @@
 
 	$query = "UPDATE `tpb-scrape`.`scraper` SET `scrape_date` = ".$responseCode." WHERE `scraper`.`id` = ".$id.";";
 	mysqli_query($link, $query) or die(mysqli_error($link));
-	
+
 	echo "error received";
 ?>

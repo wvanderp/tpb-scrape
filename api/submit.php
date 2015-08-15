@@ -1,4 +1,7 @@
 <?php
+	//this script is used for gethering the json after it is scraped.
+	//this includes updated json file_get_contents
+	//it expecst a post request with the json file to write out in the body
 	error_reporting(-1);
 	ini_set('display_errors', true);
 
