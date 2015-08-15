@@ -14,7 +14,7 @@
 
 	$data = json_decode($json,true);
 
-	$query = "INSERT INTO `tpb-scrape`.`scraper` VALUES ";
+	$query = "INSERT IGNORE INTO `tpb-scrape`.`scraper` VALUES ";
 	$i = 0;
 	foreach ($data as $id) {
 		if ($i !== 0) {
@@ -23,6 +23,7 @@
 		$query .= "(".$id.", 0)";
 		$i++;
 	}
+	// $query .= " ON DUPLICATE KEY UPDATE"
 	// echo $query;
 
 	mysqli_query($link, $query) or die(mysqli_error($link));
