@@ -1,6 +1,6 @@
 var request = require("sync-request");
 
-var lastId = 12237601;
+var lastId = 12242724;
 var newstId = 12242724;
 var query = [];
 
