@@ -16,9 +16,9 @@ function start() {
     var res = request('GET', settings.apiUrl + "/getId.php");
     var ids = JSON.parse(res.body);
 
-    ids.forEach(function(id) {
-      scrape(id);
-    });
+    for (var i = 0; i < ids.length; i++) {
+      scrape(ids[i]);
+    }
   }
 }
 
