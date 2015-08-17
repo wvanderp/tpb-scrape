@@ -28,5 +28,5 @@
 
 	mysqli_query($link, $query) or die(mysqli_error($link));
 
-	echo "new id inserterd";
+	echo "added ".mysqli_affected_rows($link)." new ids";
 ?>
