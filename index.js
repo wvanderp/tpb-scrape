@@ -53,7 +53,11 @@ function scrape(id) {
 
 function getPage(i) {
   console.log("getting page");
-  var res = request('GET', 'http://thepiratebay.mn/torrent/' + i);
+  var res = request('GET', settings.tpbUrl + 'torrent/' + i, {
+    'headers': {
+      'user-agent': settings.userAgent
+    }
+  });
   console.log(i + ": " + res.statusCode);
   if (res.statusCode == 200) {
     return {
@@ -263,7 +267,11 @@ function gether(page, id) {
 
 function getCommentsPage(i) {
   console.log("getting comments");
-  var res = request('GET', 'http://thepiratebay.la/ajax_details_comments.php?id=' + i);
+  var res = request('GET', settings.tpbUrl + 'ajax_details_comments.php?id=' + i, {
+    'headers': {
+      'user-agent': settings.userAgent
+    }
+  });
   console.log("(comments) " + i + ": " + res.statusCode);
   if (res.statusCode == 200) {
     return {

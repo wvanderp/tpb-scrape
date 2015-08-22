@@ -16,7 +16,7 @@ function start() {
 
   if (res.body !== null) {
     ids = gether(res.body);
-    console.log(ids.length+" ids found");
+    console.log(ids.length + " ids found");
 
     var resSubmit = request('POST', settings.apiUrl + "/newId.php", {
       body: JSON.stringify(ids)

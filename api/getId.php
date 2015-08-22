@@ -5,7 +5,7 @@
 
 	$link = mysqli_connect("localhost", "root", "root", "tpb-scrape") or die(mysqli_error($link));
 
-	$rand = rand(3211594, 12252296);
+	$rand = rand(3211594, 12266760);
 	$query = "SELECT id FROM `scraper` WHERE `scrape_date` = 0 AND `id` >= ".$rand." LIMIT 10";
 
 	$resp = mysqli_query($link, $query) or die(mysqli_error($link));

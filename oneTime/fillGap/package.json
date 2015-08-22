@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "a scraper for the pirate bay",
   "main": "index.js",
-  "repository":{
+  "repository": {
     "type": "git",
     "url": "https://github.com/wvanderp/tpb-scrape"
   },
