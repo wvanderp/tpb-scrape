@@ -6,8 +6,8 @@
 
 	$link = mysqli_connect("localhost", "root", "root", "tpb-scrape") or die(mysqli_error($link));
 
-	$rand = rand(3211594, 12155276);
-	$query = "SELECT * from scraper where scrape_date = 4 ASC limit 10";
+	$rand = rand(3211596, 9720658);
+	$query = "SELECT * from scraper where scrape_date = 4 AND id > ".$rand."ASC limit 10";
 
 	$resp = mysqli_query($link, $query) or die(mysqli_error($link));
 	$arr = mysqli_fetch_assoc($resp);

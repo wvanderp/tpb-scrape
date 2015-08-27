@@ -53,7 +53,11 @@ function scrape(id) {
 
 function getPage(i) {
   console.log("getting page");
-  var res = request('GET', 'http://thepiratebay.mn/torrent/' + i);
+  var res = request('GET', 'http://thepiratebay.mn/torrent/' + i, {
+    'headers': {
+      'user-agent': settings.userAgent
+    }
+  });
   console.log(i + ": " + res.statusCode);
   if (res.statusCode == 200) {
     return {
