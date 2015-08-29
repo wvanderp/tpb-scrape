@@ -53,9 +53,10 @@ function scrape(id) {
 
 function getPage(i) {
   console.log("getting page");
+  // console.log(getUserAgent());
   var res = request('GET', settings.tpbUrl + 'torrent/' + i, {
     'headers': {
-      'user-agent': settings.userAgent
+      'user-agent': getUserAgent()
     }
   });
   console.log(i + ": " + res.statusCode);
@@ -323,4 +324,13 @@ function getComments(id) {
   });
   // console.log(comments);
   return comments;
+}
+
+function getUserAgent(){
+  var randNum = getRandomInt(0, settings.userAgent.length-1);
+  return settings.userAgent[randNum];
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
